@@ -25,8 +25,8 @@ try {
     }
   }
 
-  // Run terraform plan
-  stage('plan') {
+  // Run terraform destroy
+  stage('destroy') {
     node {
       withCredentials([[
         $class: 'AmazonWebServicesCredentialsBinding',
@@ -35,46 +35,12 @@ try {
         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
       ]]) {
         ansiColor('xterm') {
-          sh 'terraform plan'
+          sh 'terraform destroy -auto-aprove'
         }
       }
     }
   }
 
-  if (env.BRANCH_NAME == 'master') {
-
-    // Run terraform apply
-    stage('apply') {
-      node {
-        withCredentials([[
-          $class: 'AmazonWebServicesCredentialsBinding',
-          credentialsId: credentialsId,
-          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-        ]]) {
-          ansiColor('xterm') {
-            sh 'terraform apply -auto-approve'
-          }
-        }
-      }
-    }
-
-    // Run terraform show
-    stage('show') {
-      node {
-        withCredentials([[
-          $class: 'AmazonWebServicesCredentialsBinding',
-          credentialsId: credentialsId,
-          accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-          secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-        ]]) {
-          ansiColor('xterm') {
-            sh 'terraform show'
-          }
-        }
-      }
-    }
-  }
   currentBuild.result = 'SUCCESS'
 }
 catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException flowError) {
