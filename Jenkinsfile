@@ -1,4 +1,4 @@
-pilpeline {
+pipeline {
 	agent nay
 	stages {
 		stage('Preparing Environment') {
