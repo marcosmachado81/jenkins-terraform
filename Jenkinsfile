@@ -1,57 +1,33 @@
-// Jenkinsfile
-String credentialsId = 'awsCredentials'
-
-try {
-  stage('checkout') {
-    node {
-      cleanWs()
-      checkout scm
-    }
-  }
-
-  // Run terraform init
-  stage('init') {
-    node {
-      withCredentials([[
-        $class: 'AmazonWebServicesCredentialsBinding',
-        credentialsId: credentialsId,
-        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-      ]]) {
-        ansiColor('xterm') {
-          sh 'terraform init'
-        }
-      }
-    }
-  }
-
-  // Run terraform destroy
-  stage('destroy') {
-    node {
-      withCredentials([[
-        $class: 'AmazonWebServicesCredentialsBinding',
-        credentialsId: credentialsId,
-        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-      ]]) {
-        ansiColor('xterm') {
-          sh 'terraform destroy -auto-approve'
-        }
-      }
-    }
-  }
-
-  currentBuild.result = 'SUCCESS'
-}
-catch (org.jenkinsci.plugins.workflow.steps.FlowInterruptedException flowError) {
-  currentBuild.result = 'ABORTED'
-}
-catch (err) {
-  currentBuild.result = 'FAILURE'
-  throw err
-}
-finally {
-  if (currentBuild.result == 'SUCCESS') {
-    currentBuild.result = 'SUCCESS'
-  }
+pilpeline {
+	agent nay
+	stages {
+		stage('Preparing Environment') {
+			steps {
+				withCredentials([[
+						$class: 'AmazonWebServicesCredentialsBinding',
+						credentialsId: credentialsId,
+						accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+						secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+				]]) {
+					ansiColor('xterm') {
+						sh 'terraform init'
+					}
+				}
+			}
+		}
+		stage('Planning Resources') {
+			steps {
+				withCredentials([[
+						$class: 'AmazonWebServicesCredentialsBinding',
+						credentialsId: credentialsId,
+						accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+						secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+				]]) {
+					ansiColor('xterm') {
+						sh 'terraform plan'
+					}
+				}
+			}
+		}
+	}
 }

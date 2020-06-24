@@ -1,3 +1,3 @@
-output "instance_ip" {
-  value = aws_instance.WebServer.*.public_ip
+output "instance" {
+  value = aws_instance.WebServer
 }
