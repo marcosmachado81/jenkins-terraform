@@ -1,5 +1,5 @@
 pipeline {
-	agent nay
+	agent any
 	stages {
 		stage('Preparing Environment') {
 			steps {
