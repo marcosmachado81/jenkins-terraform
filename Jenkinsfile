@@ -1,3 +1,5 @@
+
+String credentialsId = 'awsCredentials'
 pipeline {
 	agent any
 	stages {
