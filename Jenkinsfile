@@ -10,34 +10,34 @@ pipeline {
 			
 	}
 	stages {
-		stage('Create Environment') {
-			steps {
-				withCredentials([[
-						$class: 'AmazonWebServicesCredentialsBinding',
-						credentialsId: credentialsId,
-						accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-						secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-				]]) {
-					ansiColor('xterm') {
-						sh 'terraform init'
-					}
-				}
-			}
-		}
-		stage('Plan Resources') {
-			steps {
-				withCredentials([[
-						$class: 'AmazonWebServicesCredentialsBinding',
-						credentialsId: credentialsId,
-						accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-						secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-				]]) {
-					ansiColor('xterm') {
-						sh 'terraform plan'
-					}
-				}
-			}
-		}
+//		stage('Create Environment') {
+//			steps {
+//				withCredentials([[
+//						$class: 'AmazonWebServicesCredentialsBinding',
+//						credentialsId: credentialsId,
+//						accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+//						secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+//				]]) {
+//					ansiColor('xterm') {
+//						sh 'terraform init'
+//					}
+//				}
+//			}
+//		}
+//		stage('Plan Resources') {
+//			steps {
+//				withCredentials([[
+//						$class: 'AmazonWebServicesCredentialsBinding',
+//						credentialsId: credentialsId,
+//						accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+//						secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+//				]]) {
+//					ansiColor('xterm') {
+//						sh 'terraform plan'
+//					}
+//				}
+//			}
+//		}
 		// Run Ansible teste
 		stage('Run Ansible') {
 			
@@ -52,6 +52,8 @@ pipeline {
          				withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ansible-id', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'jenkins')]) {
 						remote.user = "jenkins"
 	              				remote.identifyFile = ${identity}
+						sh 'echo ${remote.user}'
+						sh 'echo ${remote.identity}'
 						sshCommand remote: remote, command: "echo 'oi' > /tmp/oi.txt"
   					}
 				}	
