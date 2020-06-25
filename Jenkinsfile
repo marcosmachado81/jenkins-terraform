@@ -43,7 +43,7 @@ pipeline {
 					def remote = [:]
 			              	remote.name = "jenkins"
 					remote.host = params.AnsibleServer
-              				remote.port = ${env.port}
+              				remote.port = env.port.toInteger()
 	              			remote.allowAnyHosts = true
 					//Create the credential with ssh-keygen -m PEM
 					//The new openssh format isn't supported yet
