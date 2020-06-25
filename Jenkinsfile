@@ -4,10 +4,7 @@ String credentialsId = 'awsCredentials'
 pipeline {
 	agent any
 	environment {
-		LOG_SERVER='http://192.168.0.56:10000'
-		PLAYBOOK='minimal_http.yml'
-		SECRETFILE="/opt/secrets/secret.pem"
-			
+		port = 22			
 	}
 	stages {
 //		stage('Create Environment') {
@@ -45,16 +42,18 @@ pipeline {
 				script {
 					def remote = [:]
 			              	remote.name = "jenkins"
-					remote.host = "192.168.0.59"
-              				remote.port = 22
+					remote.host = params.AnsibleServer
+              				remote.port = env.port
 	              			remote.allowAnyHosts = true
-
-         				withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ansible-id', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'jenkins')]) {
-						remote.user = "jenkins"
-	              				remote.identifyFile = ${identity}
-						sh 'echo ${remote.user}'
-						sh 'echo ${remote.identity}'
-						sshCommand remote: remote, command: "echo 'oi' > /tmp/oi.txt"
+					//Create the credential with ssh-keygen -m PEM
+					//The new openssh format isn't supported yet
+         				withCredentials([sshUserPrivateKey(credentialsId: params.AnsibleKeyId, 
+										keyFileVariable: 'keyFile', 
+										passphraseVariable: '', 
+										usernameVariable: 'userName')]) {
+						remote.user = userName
+	              				remote.identityFile = keyFile
+						sshCommand remote: remote, command: "echo 'oi' >> /tmp/oi.txt"
   					}
 				}	
 			}
