@@ -50,8 +50,8 @@ pipeline {
 	              			remote.allowAnyHosts = true
 
          				withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ansible-id', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'jenkins')]) {
-						remote.user = jenkins
-	              				remote.identifyFile = identity
+						remote.user = "jenkins"
+	              				remote.identifyFile = ${identity}
 						sshCommand remote: remote, command: "echo 'oi' > /tmp/oi.txt"
   					}
 				}	
